@@ -1,4 +1,4 @@
-import { disassembleHangul } from "@toss/hangul";
+import { disassemble } from "es-hangul";
 import dayjsLib from "dayjs";
 import "dayjs/locale/ko.js"; // import locale
 import relativeTime from "dayjs/plugin/relativeTime.js"; // import plugin
@@ -29,7 +29,7 @@ type NullRemovedArrayItem<T> = T extends null ? null : NullRemoved<T>;
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const removeNullDeep = <T extends { [key: string]: any }>(
-  obj: T
+  obj: T,
 ): NullRemoved<T> => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result = {} as any;
@@ -70,7 +70,7 @@ export const removeNullDeep = <T extends { [key: string]: any }>(
 export async function withDurationLog<T>(
   name: string,
   promise: PromiseLike<T>,
-  options: { onlyDev?: boolean } = {}
+  options: { onlyDev?: boolean } = {},
 ): Promise<T> {
   const { onlyDev = false } = options;
   if (onlyDev && process.env.NODE_ENV !== "development") {
@@ -95,14 +95,14 @@ function bigintToNumber(n: bigint) {
 
 type BigIntToNumber<T extends Record<string, unknown>> = {
   [key in keyof T]: T[key] extends bigint
-    ? number
-    : T[key] extends bigint | null
-    ? number | null
-    : T[key];
+  ? number
+  : T[key] extends bigint | null
+  ? number | null
+  : T[key];
 };
 
 export function getObjBigintToNumber<T extends Record<string, unknown>>(
-  obj: T
+  obj: T,
 ): BigIntToNumber<T> {
   const result = { ...obj } as BigIntToNumber<T>;
 
@@ -118,11 +118,11 @@ export function getObjBigintToNumber<T extends Record<string, unknown>>(
 
 export function filterByContainsHangul<T extends { name: string }>(
   items: T[],
-  query: string
+  query: string,
 ) {
   return items.filter((item) =>
-    disassembleHangul(item.name)
+    disassemble(item.name)
       .replace(/ /g, "")
-      .includes(disassembleHangul(query).replace(/ /g, ""))
+      .includes(disassemble(query).replace(/ /g, "")),
   );
 }
